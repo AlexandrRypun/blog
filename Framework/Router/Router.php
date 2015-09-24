@@ -1,6 +1,8 @@
 <?
 namespace Framework\Router;
 
+use Framework\Request\Request;
+
 /**
  * Class Router
  * @package Framework\Router
@@ -13,7 +15,7 @@ class Router {
     
     
     public function __construct(){
-        $this->request = new \Framework\Request\Request;
+        $this->request = new Request();
     }
 
     /**
