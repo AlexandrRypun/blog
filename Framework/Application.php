@@ -1,5 +1,7 @@
 <?php
 namespace Framework;
+use Framework\Request\Request;
+use Framework\Router\Router;
 
 /**
  * Class Application
@@ -13,8 +15,8 @@ class Application {
 
     
     public function __construct($config){
-        $this->request = new Request\Request;
-        $this->router = new Router\Router;
+        $this->request = new Request();
+        $this->router = new Router();
         $this->config = include_once $this->request->change_slashes($config);
     }
     

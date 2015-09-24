@@ -5,6 +5,8 @@
 namespace Framework\Request;
  
 
+use Framework\Validation\Validator;
+
 class Request {
     
     private $post;
@@ -14,10 +16,13 @@ class Request {
     private $script;
     private $params;
     private $method;
+    private $request;
     
     
     
     public function __construct(){
+        $this->request = $_REQUEST;
+        $this->filter();
         $this->post = $_POST;
         $this->get = $_GET;
         $this->cookies = $_COOKIE;
@@ -34,21 +39,7 @@ class Request {
         return $this->$name;
     }
     
-    public function getValue($key){
-        switch ($this->method) {
-            case "GET":
-                $value = $_GET[$key];
-                break;
-            case "POST":
-                $value = $_POST[$key];
-                break;
-        }
-        
-        $v = new \Framework\Validation\Validator;
-        return $v->validString($value);
-    }
-    
-    public function addVars($vars, $method='get'){
+    public function addVars($vars=array(), $method='get'){
         foreach ($vars as $key=>$value){
             if ($method == 'get'){
                 $_GET[$key] = $value;
@@ -57,15 +48,41 @@ class Request {
             }
         }
     }
-    
-    
+
     public function change_slashes($str){
         $str = str_replace('\\', '/', $str);
         return $str;
     }
-    
-    
-   
-   
+
+    public function post($var){
+        return $this->post[$var];
+    }
+
+    public function get($var){
+        return $this->get[$var];
+    }
+
+    public function isPost(){
+        if ($this->method == 'POST') {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function isGet(){
+        if ($this->method == 'GET') {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    private function filter(){
+        $pattern = '/[^a-zA-ZА-Яа-я0-9_\s]/';
+        foreach ($this->request as $key=>$value){
+            $this->request[$key] = preg_replace($pattern, '', $value);
+        }
+    }
 }
 ?>
