@@ -1,7 +1,12 @@
 <?php
 namespace Framework;
+
+use Framework\DI\Service;
+use Framework\Exception\NotFoundExeption;
 use Framework\Request\Request;
 use Framework\Router\Router;
+use Framework\Security\Security;
+use Framework\Session\Session;
 
 /**
  * Class Application
@@ -10,37 +15,37 @@ use Framework\Router\Router;
 
 class Application {
     private $config;
-    private $router;
     private $request;
 
     
     public function __construct($config){
+        $sl = Service::getInstance();
+        $sl->set('security', new Security());
+        $sl->set('session', new Session());
+        $sl->set('router', new Router());
+
         $this->request = new Request();
-        $this->router = new Router();
         $this->config = include_once $this->request->change_slashes($config);
     }
     
      
     
     public function run(){
-        $route = $this->router->start($this->config['routes']);
+        $route = Service::get('router')->start($this->config['routes']);
         $controller = new $route['controller'];
         $action = $route['action'].'Action';
-        if ($condition){
-            //form $params
-        }else{
-            $params = null;
-        }
-        $this->startController($controller, $action, $params);
+        if (!empty($route['id'])) $id = $route['id'];
+
+        $this->startController($controller, $action, $id);
     }
 
-    private function startController($controller, $action, $params){
+    private function startController($controller, $action, $id){
         $refl = new \ReflectionClass($controller);
         if ($refl->hasMethod($action)) {
             $method = new \ReflectionMethod($controller, $action);
-            $method->invoke(new $controller, $params);
+            $method->invoke(new $controller, $id);
         }else{
-            new \Exception('no method');
+            new HttpNotFoundExeption('method');
         }
     }
 

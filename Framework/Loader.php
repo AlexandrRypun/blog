@@ -33,7 +33,7 @@ class Loader {
                 $file_dir = self::$namespaces[$first_part].'/'.implode('/', $parts).'.php';
                 require_once $file_dir;
             }else{
-                new \Framework\Exception\NotFound();
+                new \Framework\Exception\HttpNotFoundExeption($class);
             }
         }
         
