@@ -16,13 +16,10 @@ class Request {
     private $script;
     private $params;
     private $method;
-    private $request;
     
     
     
     public function __construct(){
-        $this->request = $_REQUEST;
-        $this->filter();
         $this->post = $_POST;
         $this->get = $_GET;
         $this->cookies = $_COOKIE;
@@ -36,10 +33,13 @@ class Request {
      * Return necessary information from request
      */
     public function getRequestInfo($name){
-        return $this->$name;
+        return $this->filter($this->$name);
     }
     
     public function addVars($vars=array(), $method='get'){
+
+        $vars = $this->filter($vars);
+
         foreach ($vars as $key=>$value){
             if ($method == 'get'){
                 $_GET[$key] = $value;
@@ -55,11 +55,11 @@ class Request {
     }
 
     public function post($var){
-        return $this->post[$var];
+        return $this->filter($this->post[$var]);
     }
 
     public function get($var){
-        return $this->get[$var];
+        return $this->filter($this->get[$var]);
     }
 
     public function isPost(){
@@ -78,10 +78,19 @@ class Request {
         }
     }
 
-    private function filter(){
-        $pattern = '/[^a-zA-ZА-Яа-я0-9_\s]/';
-        foreach ($this->request as $key=>$value){
-            $this->request[$key] = preg_replace($pattern, '', $value);
+    private function filter($value){
+        $pattern = '/<\s*\/*\s*\w*>|[\$`~#<>\[\]\{\}\\\*\^%]/';
+        if (!empty($value)) {
+            if (is_array($value)){
+                foreach ($value as $key=>$val){
+                    $value[$key] = preg_replace($pattern, '', $val);
+                }
+            }else{
+                $value = preg_replace($pattern, '', $value);
+            }
+            return $value;
+        }else{
+            return null;
         }
     }
 }
