@@ -7,7 +7,7 @@ namespace Framework\Response;
  * @package Framework\Response
  */
 
-class Response implements IResponse{
+class Response extends AResponse{
 
     public function __construct($post){
 

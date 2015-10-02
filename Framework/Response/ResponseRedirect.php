@@ -7,7 +7,7 @@ namespace Framework\Response;
  * @package Framework\Response
  */
 
-class ResponseRedirect implements IResponse{
+class ResponseRedirect extends AResponse{
 
     public function __construct($link){
 

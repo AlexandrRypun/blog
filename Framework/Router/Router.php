@@ -26,39 +26,70 @@ class Router {
      */
 
     public function start($routes = null){
-        $parts = explode('/', $this->request->getRequestInfo('uri'));
-        array_shift($parts);
-        $str = '/'.implode('/', $parts);
 
-        $result = $this->reg($str);
+        $uri =  $this->request->getRequestInfo('uri');
 
         if (!is_null($routes)) {
             foreach ($routes as $value) {
-                if ($result['pattern'] == $value['pattern']){
-                    $route = $value;
+                if (strpos($value['pattern'], '{')) {
+                    $res = $this->patToReg($value);
+                    $pattern = $res[0];
+                    $vars = $this->getVars($pattern, $res[1], $uri);
+                }else{
+                    $pattern = $value['pattern'];
                 }
+
+                if (preg_match('~^'.$pattern.'$~', $uri)) {
+                    $route = $value;
+                    break;
+                }
+
             }
-            if ($route) {
-                $route['id'] = $result['id']; //add 'id' to result array
+
+
+            if (!empty($route)){
+                if (!empty($vars)) $route['vars'] = $vars;
                 return $route;
             }else{
-                new HttpNotFoundExeption('pattern');
+                new HttpNotFoundExeption('route');
             }
+
         }else{
             new HttpNotFoundExeption('routes');
         }
     }
 
-    private function reg($str){
-        $id = null;
-        $pattern = '/\/\d+/';
 
-        preg_match_all($pattern, $str, $id);
-        $id = (!is_null($id))? substr($id[0][0], 1) : null;
+    private function patToReg($route = array()){
 
-        $str = preg_replace($pattern, '/{id}', $str);
+        $pattern = '/\{[\w\d_]+\}/Ui';
+        preg_match_all($pattern, $route['pattern'], $matches);
 
-        return array('pattern'=>$str, 'id'=>$id);
+
+        foreach ($matches[0] as $value){
+            if(array_key_exists(trim($value, '{}'), $route['_requirements'])) {
+                $replacement[] = '('.$route['_requirements'][trim($value, '{}')].')';
+            }
+        }
+
+        $str = str_replace($matches[0], $replacement, $route['pattern']);
+
+        return array($str, $matches[0]);
+    }
+
+
+    private function getVars($pattern, $keys, $uri){
+
+        preg_match('~'.$pattern.'~i', $uri, $matches);
+
+        foreach ($keys as $key=>$value){
+            if (isset($matches[$key+1])){
+                $vars[trim($value, '{}')] = $matches[$key+1];
+            }
+
+        }
+
+        return $vars;
     }
 
 }
