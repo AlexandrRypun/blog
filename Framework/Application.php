@@ -2,6 +2,7 @@
 namespace Framework;
 
 use Framework\DI\Service;
+use Framework\Exception\HttpNotFoundExeption;
 use Framework\Exception\NotFoundExeption;
 use Framework\Request\Request;
 use Framework\Router\Router;
@@ -32,18 +33,36 @@ class Application {
     
     public function run(){
         $route = Service::get('router')->start($this->config['routes']);
+
         $controller = new $route['controller'];
         $action = $route['action'].'Action';
-        if (!empty($route['id'])) $id = $route['id'];
 
-        $this->startController($controller, $action, $id);
+        $vars = null;
+        if (!empty($route['vars'])) $vars = $route['vars'];
+
+        $this->startController($controller, $action, $vars);
     }
 
-    private function startController($controller, $action, $id){
+    private function startController($controller, $action, $vars){
         $refl = new \ReflectionClass($controller);
         if ($refl->hasMethod($action)) {
             $method = new \ReflectionMethod($controller, $action);
-            $method->invoke(new $controller, $id);
+            $params = $method->getParameters();
+
+            if (empty($params)) {
+                $method->invoke(new $controller);
+            }else{
+                foreach ($params as $value){
+                    if (isset($vars[$value->getName()])) {
+                        $parameters[$value->getName()] = $vars[$value->getName()];
+                    }else{
+                        new HttpNotFoundExeption('parameters for method '.$method->getName());
+                    }
+
+                }
+                $method->invokeArgs(new $controller, $parameters);
+            }
+
         }else{
             new HttpNotFoundExeption('method');
         }

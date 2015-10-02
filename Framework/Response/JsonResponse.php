@@ -7,7 +7,7 @@ namespace Framework\Response;
  * @package Framework\Response
  */
 
-class JsonResponse implements IResponse{
+class JsonResponse extends AResponse{
 
     public function __construct(){
 

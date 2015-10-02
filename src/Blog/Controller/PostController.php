@@ -64,4 +64,5 @@ class PostController extends Controller
         }
         return $this->render('show.html', array('post' => $post));
     }
+
 }
