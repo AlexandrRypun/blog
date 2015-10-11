@@ -9,7 +9,7 @@
 namespace Blog\Model;
 
 use Framework\Model\ActiveRecord;
-use Framework\Security\Model\UserInterface;
+use Framework\Model\UserInterface;
 
 class User extends ActiveRecord implements UserInterface
 {

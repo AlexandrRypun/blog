@@ -11,7 +11,7 @@ use Blog\Model\Post;
 use Framework\Controller\Controller;
 use Framework\DI\Service;
 use Framework\Exception\DatabaseException;
-use Framework\Exception\HttpNotFoundException;
+use Framework\Exception\HttpNotFoundExeption;
 use Framework\Request\Request;
 use Framework\Response\Response;
 use Framework\Validation\Validator;
@@ -50,7 +50,6 @@ class PostController extends Controller
                 $error = $e->getMessage();
             }
         }
-
         return $this->render(
                     'add.html',
                     array('action' => $this->generateRoute('add_post'), 'errors' => isset($error)?$error:null)
@@ -60,7 +59,7 @@ class PostController extends Controller
     public function showAction($id)
     {
         if (!$post = Post::find((int)$id)) {
-            throw new HttpNotFoundException('Page Not Found!');
+            throw new HttpNotFoundExeption('Page Not Found!');
         }
         return $this->render('show.html', array('post' => $post));
     }

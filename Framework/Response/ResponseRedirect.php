@@ -10,23 +10,11 @@ namespace Framework\Response;
 class ResponseRedirect extends AResponse{
 
     public function __construct($link){
-
-    }
-
-    public function setHeader(){
-
-    }
-
-    public function setContent(){
-
-    }
-
-    public function getContent(){
-
+        $this->link = $link;
     }
 
     public function send(){
-
+        header('Location: '.$this->link);
     }
 
 }

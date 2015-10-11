@@ -8,29 +8,39 @@ namespace Framework\Response;
 
 abstract class AResponse{
 
-    private $headers = array();
-    private $content;
-    private $code;
+    protected $headers = array();
+    protected $content;
+    protected $code;
 
 
-    function setHeader($title, $value){
-        $this->headers[$title] = $value;
-    }
-
-    function setContent($content){
+    public function __construct($content){
         $this->content = $content;
     }
 
-    function setCode($code){
+    public function setHeader($header){
+        $this->headers[] = $header;
+    }
+
+    public function setContent($content){
+        $this->content = $content;
+    }
+
+    public function setCode($code){
         $this->code = $code;
     }
 
-    function getContent(){
-
+    public function getContent(){
+        return $this->content;
     }
 
-    function send(){
+    public function send(){
+        $this->setHeader('Charset: utf8');
+        header(implode($this->headers, '\n'));
+        echo $this->content;
+    }
 
+    public function getType(){
+        return $this->type;
     }
 }
 

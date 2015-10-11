@@ -1,26 +1,23 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: sash
- * Date: 27.09.15
- * Time: 21:42
- */
 
 namespace Framework\Security;
 
 
+use Framework\DI\Service;
+
 class Security{
 
-    public function setUser($user){
 
+    public function setUser($user){
+        Service::get('session')->addToSess('user', $user);
     }
 
     public function isAuthenticated(){
-
+        return !empty($_SESSION['user']);
     }
 
     public function clear(){
-
+        Service::get('session')->delFromSess('user');
     }
 
 }

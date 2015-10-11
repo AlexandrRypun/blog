@@ -10,13 +10,14 @@ use Framework\Request\Request;
  */
     
 class Router {
-    
-    private $validation;
+
     private $request;
+    private $routes;
     
     
-    public function __construct(){
+    public function __construct($routes = null){
         $this->request = new Request();
+        $this->routes = $routes;
     }
 
     /**
@@ -25,12 +26,12 @@ class Router {
      * @return mixed
      */
 
-    public function start($routes = null){
+    public function start(){
 
         $uri =  $this->request->getRequestInfo('uri');
 
-        if (!is_null($routes)) {
-            foreach ($routes as $value) {
+        if (!is_null($this->routes)) {
+            foreach ($this->routes as $value) {
                 if (strpos($value['pattern'], '{')) {
                     $res = $this->patToReg($value);
                     $pattern = $res[0];
@@ -45,7 +46,6 @@ class Router {
                 }
 
             }
-
 
             if (!empty($route)){
                 if (!empty($vars)) $route['vars'] = $vars;
@@ -86,10 +86,38 @@ class Router {
             if (isset($matches[$key+1])){
                 $vars[trim($value, '{}')] = $matches[$key+1];
             }
-
         }
 
         return $vars;
+    }
+
+    public function buildRoute($name, $params = array()){
+
+        if (!is_null($this->routes)){
+            $pattern = null;
+            foreach($this->routes as $key=>$value){
+                if ($key == $name){
+                    $pattern = $value['pattern'];
+                    if (strpos($pattern, '{') && !empty($params)) {
+
+                        $p = '/(\{[\w\d_]+\})/Ui';
+                        preg_match($p, $value['pattern'], $matches);
+
+                        foreach ($params as $k=>$v){
+                            $pattern = str_replace($matches[$k+1], $v, $pattern);
+                        }
+                    }
+                    break;
+                }
+
+            }
+            if (is_null($pattern)) $pattern = '/';
+
+        }else{
+            new HttpNotFoundExeption('route');
+        }
+
+        return $pattern;
     }
 
 }
