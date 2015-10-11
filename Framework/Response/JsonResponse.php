@@ -9,28 +9,17 @@ namespace Framework\Response;
 
 class JsonResponse extends AResponse{
 
-    public function __construct(){
+    protected $headers = array('Content-Type: application/json');
+    protected $type = 'json';
 
-    }
-
-    public function setHeader(){
-
-    }
-
-    public function setContent(){
-
-    }
-
-    public function getContent(){
-
-    }
 
     public function send(){
-
+        header(implode($this->headers, '\n'));
+        echo json_encode($this->content);
     }
 
+
+
 }
-
-
 
 ?>

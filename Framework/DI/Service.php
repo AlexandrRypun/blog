@@ -1,10 +1,7 @@
 <?
 namespace Framework\DI;
 
-/**
- * Class Service
- * @package Framework\DI
- */
+
 
 class Service {
 
@@ -36,8 +33,9 @@ class Service {
 
 
     public function set($service_name, $obj){
+
         if (!array_key_exists($service_name, self::$services)){
-            self::$services[$service_name] = $obj;
+                self::$services[$service_name] = $obj;
         }
     }
 

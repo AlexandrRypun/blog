@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: sash
- * Date: 27.09.15
- * Time: 22:06
- */
 
 namespace Framework\Exception;
 

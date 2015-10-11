@@ -1,9 +1,9 @@
 <?php
-
 $activeIfRoute = function ($item) use (&$route) {
     return $route['_name'] === $item?'class="active"':'';
 };
 ?>
+
 <!DOCTYPE html>
 <html lang="en-us">
 
@@ -22,6 +22,8 @@ $activeIfRoute = function ($item) use (&$route) {
     <link href="/css/theme.css" rel="stylesheet">
 
 </head>
+
+
 <body role="document">
 
 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -38,13 +40,13 @@ $activeIfRoute = function ($item) use (&$route) {
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li <?php echo $activeIfRoute('home') ?>><a href="<?php echo $getRoute('home')?>">Home</a></li>
-                <li <?php echo $activeIfRoute('add_post') ?>><a href="<?php echo $getRoute('add_post')?>">Add Post</a></li>
+                <li <?php echo $activeIfRoute('home') ?>><a href="<?php //echo $getRoute('home')?>">Home</a></li>
+                <li <?php echo $activeIfRoute('add_post') ?>><a href="/posts/add<?php //echo $getRoute('add_post')?>">Add Post</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <?php if (is_null($user)) { ?>
-                    <li <?php echo $activeIfRoute('signin') ?>><a href="<?php echo $getRoute('signin')?>">Sign in</a></li>
-                    <li <?php echo $activeIfRoute('login') ?>><a href="<?php echo $getRoute('login')?>">Login</a></li>
+                    <li <?php echo $activeIfRoute('signin') ?>><a href="<?php //echo $getRoute('signin')?>">Sign in</a></li>
+                    <li <?php echo $activeIfRoute('login') ?>><a href="/login<?php// echo $getRoute('login')?>">Login</a></li>
                 <?php } else { ?>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -52,9 +54,9 @@ $activeIfRoute = function ($item) use (&$route) {
                             <?php echo 'Hello, '.$user->email ?> <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            <li <?php echo $activeIfRoute('profile') ?>><a href="<?php echo $getRoute('profile')?>">Profile</a></li>
+                            <li <?php echo $activeIfRoute('profile') ?>><a href="<?php //echo $getRoute('profile')?>">Profile</a></li>
                             <li class="divider"></li>
-                            <li><a href="<?php echo $getRoute('logout')?>">Logout</a></li>
+                            <li><a href="<?php// echo $getRoute('logout')?>">Logout</a></li>
                         </ul>
                     </li>
 
@@ -94,4 +96,5 @@ $activeIfRoute = function ($item) use (&$route) {
 </script>
 
 </body>
+
 </html>

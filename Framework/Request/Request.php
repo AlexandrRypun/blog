@@ -27,6 +27,8 @@ class Request {
         $this->script = $_SERVER['SCRIPT_NAME'];
         $this->params = $_SERVER['QUERY_STRING'];
         $this->method = $_SERVER['REQUEST_METHOD'];
+        $this->referer = $_SERVER['HTTP_REFERER'];
+
     }
     
     /**
