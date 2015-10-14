@@ -22,7 +22,9 @@ abstract class Controller {
     }
 
     protected function redirect($url, $msg = ''){
-        if ($msg) Service::get('session')->addToSess('msg', $msg);
+        if ($msg){
+            Service::get('session')->addToSess('msg', $msg);
+        }
         return new ResponseRedirect($url);
     }
 

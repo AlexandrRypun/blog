@@ -1,7 +1,7 @@
 <?php
 
 namespace Framework;
-session_start();
+
 use Blog\Model\User;
 use Framework\DI\Service;
 use Framework\Exception\AccessException;
@@ -36,7 +36,7 @@ class Application {
         $sl->set('session', new Session());
         $sl->set('router', new Router($this->config['routes']));
       /**  try {
-            echo new \PDO($this->config['pdo']['dns'], $this->config['pdo']['user'], $this->config['pdo']['password']);
+            echo new \PDO($this->config['pdo']['dsn'], $this->config['pdo']['user'], $this->config['pdo']['password']);
         } catch (\PDOException $e) {
             echo 'No connect to db: ' . $e->getMessage();
         }*/

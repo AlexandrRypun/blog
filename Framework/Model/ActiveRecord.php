@@ -23,12 +23,14 @@ abstract class ActiveRecord{
         $post1->title = 'title1';
         $post1->content = 'text1';
         $post1->date = '9-10-2015';
+        $post1->name = 'user1';
 
         $post2 = new Post();
         $post2->id = 2;
         $post2->title = 'title2';
         $post2->content = 'text2';
         $post2->date = '10-10-2015';
+        $post2->name = 'user2';
 
         $posts = array($post1, $post2);
 
