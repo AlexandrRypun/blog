@@ -21,6 +21,21 @@ class Renderer {
     }
 
     public  function  render(){
+
+        $getRoute = function ($name){
+            return Service::get('router')->buildRoute($name);
+        };
+
+        $user = Service::get('session')->get('user');
+
+        $include = function($controller, $action, $params = array()){
+
+        };
+
+        $route = Service::get('router')->start();
+
+        $flush = (Service::get('session')->get('flush'))?Service::get('session')->get('flush'):array();
+        Service::get('session')->delFromSess('flush');
         ob_start();
         if (is_array($this->content)){
             extract($this->content);
@@ -30,6 +45,8 @@ class Renderer {
         include $this->layout;
         return ob_get_clean();
     }
+
+
 }
 
 ?>

@@ -4,7 +4,7 @@
         $errors = array();
     } ?>
 
-    <form class="form-signin" role="form" method="post" action="<?php// echo $getRoute('login')?>">
+    <form class="form-signin" role="form" method="post" action="<?php echo $getRoute('login')?>">
         <h2 class="form-signin-heading">Please login in</h2>
         <?php  foreach($errors as $error) {  ?>
             <div class="alert alert-danger alert-dismissible" role="alert">

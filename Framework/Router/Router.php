@@ -31,7 +31,7 @@ class Router {
         $uri =  $this->request->getRequestInfo('uri');
 
         if (!is_null($this->routes)) {
-            foreach ($this->routes as $value) {
+            foreach ($this->routes as $key=>$value) {
                 if (strpos($value['pattern'], '{')) {
                     $res = $this->patToReg($value);
                     $pattern = $res[0];
@@ -48,6 +48,7 @@ class Router {
             }
 
             if (!empty($route)){
+                $route['_name'] = $key;
                 if (!empty($vars)) $route['vars'] = $vars;
                 return $route;
             }else{
