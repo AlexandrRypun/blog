@@ -1,12 +1,13 @@
 <?php
 
 namespace Framework;
-
+session_start();
 use Blog\Model\User;
 use Framework\DI\Service;
 use Framework\Exception\AccessException;
 use Framework\Exception\ServerErrorException;
 use Framework\Exception\HttpNotFoundExeption;
+use Framework\Model\DB;
 use Framework\Renderer\Renderer;
 use Framework\Request\Request;
 use Framework\Response\AResponse;
@@ -35,11 +36,8 @@ class Application {
         $sl->set('security', new Security());
         $sl->set('session', new Session());
         $sl->set('router', new Router($this->config['routes']));
-      /**  try {
-            echo new \PDO($this->config['pdo']['dsn'], $this->config['pdo']['user'], $this->config['pdo']['password']);
-        } catch (\PDOException $e) {
-            echo 'No connect to db: ' . $e->getMessage();
-        }*/
+        $sl->set('db', new \PDO($this->config['pdo']['dsn'], $this->config['pdo']['user'], $this->config['pdo']['password']));
+        $sl->set('app', $this);
     }
     
      
@@ -48,21 +46,17 @@ class Application {
         $route = Service::get('router')->start();
         $this->savePathToView($route['controller']);
 
-        $controller = new $route['controller'];
-        $action = $route['action'].'Action';
-
         $vars = null;
         if (!empty($route['vars'])) $vars = $route['vars'];
 
         if  (!empty($route['security'])){
             $user = Service::get('session')->get('user');
-            if ($user instanceof User) {
+            if (is_object($user)) {
                 if (array_search($user->getRole(), $route['security']) === false){
                     new AccessException('access denied');
-                    die;
                 }
             }else{
-                $redirect = new ResponseRedirect(Service::get('router')->buildRoute('login'));
+                $redirect = new ResponseRedirect(Service::get('router')->buildRoute($this->config['security']['login_route']));
                 $redirect->send();
             }
 
@@ -70,27 +64,30 @@ class Application {
 
         Service::get('session')->setReturnUrl($this->request->getRequestInfo('referer'));
 
-        $response = $this->startController($controller, $action, $vars);
+        $response = $this->startController($route['controller'], $route['action'], $vars);
 
-        if ($response instanceof AResponse){
-            if ($response->getType() == 'html'){
+        if ($response->getType() == 'html'){
 
-                $renderer = new Renderer($this->config['main_layout'], $response->getContent());
+            $flush = (Service::get('session')->get('flush'))?Service::get('session')->get('flush'):array();
+            Service::get('session')->delFromSess('flush');
 
-                $response = new Response($renderer->render());
+            $content['content'] = $response->getContent();
+            $content['flush'] = $flush;
 
-            }
-            $response->send();
-        }else{
-            new ServerErrorException(500, 'Sory, server error', $this->config['error_500']);
+            $renderer = new Renderer($this->config['main_layout'],$content);
+
+            $response = new Response($renderer->render());
+
         }
 
-
-
-
+        $response->send();
     }
 
-    private function startController($controller, $action, $vars){
+    public function startController($controller, $action, $vars=array()){
+
+        $controller = new $controller;
+        $action = $action.'Action';
+
         $refl = new \ReflectionClass($controller);
         if ($refl->hasMethod($action)) {
             $method = new \ReflectionMethod($controller, $action);
@@ -110,7 +107,12 @@ class Application {
                 $response = $method->invokeArgs(new $controller, $parameters);
             }
 
-            return $response;
+            if ($response instanceof AResponse){
+                return $response;
+
+            }else{
+                new ServerErrorException(500, 'Sory, server error', $this->config['error_500']);
+            }
 
         }else{
             new HttpNotFoundExeption('method');

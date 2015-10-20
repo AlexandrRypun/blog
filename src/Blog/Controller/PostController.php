@@ -43,6 +43,7 @@ class PostController extends Controller
                 if ($validator->isValid()) {
                     $post->save();
                     return $this->redirect($this->generateRoute('home'), 'The data has been saved successfully');
+                                                                            //array('error'=>array('The data has been saved successfully')));
                 } else {
                     $error = $validator->getErrors();
                 }

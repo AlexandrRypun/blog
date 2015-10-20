@@ -21,9 +21,13 @@ abstract class Controller {
         return new Response($renderer->render());
     }
 
-    protected function redirect($url, $msg = ''){
-        if ($msg){
-            Service::get('session')->addToSess('msg', $msg);
+    protected function redirect($url, $msg = null){
+        if (is_string($msg)){
+            $flush['success'][] = $msg;
+            Service::get('session')->addToSess('flush', $flush);
+        }
+        if (is_array($msg)){
+            Service::get('session')->addToSess('flush', $msg);
         }
         return new ResponseRedirect($url);
     }

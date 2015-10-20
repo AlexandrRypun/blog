@@ -5,7 +5,7 @@ return array(
     'main_layout' => __DIR__.'/../../src/Blog/views/layout.html.php',
     'error_500'   => __DIR__.'/../../src/Blog/views/500.html.php',
     'pdo'         => array(
-        'dsn'      => 'mysql:dbname=education;host=192.168.64.15',
+        'dsn'      => 'mysql:dbname=education;host=localhost',
         'user'     => 'education',
         'password' => 'n29OB4uIYGii'
     ),

@@ -6,11 +6,18 @@ class Validator{
     protected $obj;
 
     public function __construct($obj){
-        $this->post = $obj;
+        $this->obj = $obj;
     }
 
     public function isValid(){
-
+       /** $rules = array();
+        $rules = $this->obj->getRules();
+        foreach($rules as $key=>$value){
+            foreach ($value as $rule){
+                $rule->check($this->obj->$key);
+            }
+        }*/
+        return true;
     }
 
     public  function getErrors(){
