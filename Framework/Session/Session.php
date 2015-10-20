@@ -1,7 +1,7 @@
 <?php
 
 namespace Framework\Session;
-session_start();
+
 
 class Session{
 

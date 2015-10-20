@@ -53,6 +53,7 @@ class Router {
                 return $route;
             }else{
                 new HttpNotFoundExeption('route');
+                die();
             }
 
         }else{

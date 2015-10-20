@@ -1,6 +1,7 @@
 <?php
 $date = new \DateTime();
 $date->setTimestamp(strtotime($post->date));
+
 ?>
 
 <div class="row">

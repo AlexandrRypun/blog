@@ -4,7 +4,7 @@
         <div class="blog-post">
             <h2 class="blog-post-title"><a href="/posts/<?php echo $post->id ?>"> <?php echo $post->title ?></a></h2>
 
-            <p class="blog-post-meta"><?php echo date('F j, Y', strtotime($post->date)) ?> by <a
+            <p class="blog-post-meta"><?php echo date('F j, Y', strtotime($post->date)) ?> by somebody<a
                     href="#"><?php echo $post->name ?></a>
             </p>
 

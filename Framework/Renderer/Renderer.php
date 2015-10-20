@@ -1,6 +1,7 @@
 <?
 namespace Framework\Renderer;
 
+use Framework\Application;
 use Framework\DI\Service;
 
 class Renderer {
@@ -29,13 +30,12 @@ class Renderer {
         $user = Service::get('session')->get('user');
 
         $include = function($controller, $action, $params = array()){
-
+            $response = Service::get('app')->startController($controller, $action, $params);
+            if ($response) $response->send();
         };
 
         $route = Service::get('router')->start();
 
-        $flush = (Service::get('session')->get('flush'))?Service::get('session')->get('flush'):array();
-        Service::get('session')->delFromSess('flush');
         ob_start();
         if (is_array($this->content)){
             extract($this->content);
