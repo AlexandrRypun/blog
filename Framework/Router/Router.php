@@ -2,7 +2,8 @@
 namespace Framework\Router;
 
 use Framework\Exception\HttpNotFoundExeption;
-use Framework\Request\Request;
+use Framework\DI\Service;
+
 
 /**
  * Class Router
@@ -11,24 +12,20 @@ use Framework\Request\Request;
     
 class Router {
 
-    private $request;
     private $routes;
     
     
     public function __construct($routes = null){
-        $this->request = new Request();
         $this->routes = $routes;
     }
 
     /**
      * Finds necessary information from routes
-     * @param null $routes
-     * @return mixed
      */
 
     public function start(){
 
-        $uri =  $this->request->getRequestInfo('uri');
+        $uri =  Service::get('request')->getRequestInfo('uri');
 
         if (!is_null($this->routes)) {
             foreach ($this->routes as $key=>$value) {

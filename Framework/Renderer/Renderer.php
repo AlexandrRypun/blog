@@ -36,6 +36,11 @@ class Renderer {
 
         $route = Service::get('router')->start();
 
+        $generateToken = function(){
+            $token = Service::get('security')->generateToken();
+            echo '<input type = "hidden" name = "token" value = "'.$token.'">';
+        };
+
         ob_start();
         if (is_array($this->content)){
             extract($this->content);

@@ -19,6 +19,10 @@ class Session{
         unset ($_SESSION[$key]);
     }
 
+    public function getSessID(){
+        return session_id();
+    }
+
     public function setReturnUrl($url){
         if (!strpos($url, 'login')) $this->addToSess('returnUrl',$url);
         $this->returnUrl = $this->get('returnUrl');
