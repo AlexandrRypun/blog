@@ -25,15 +25,14 @@ use Framework\Session\Session;
 
 class Application {
     private $config;
-    private $request;
-    
+
     public function __construct($config){
-        $this->request = new Request();
-        $this->config = include_once $this->request->change_slashes($config);
 
         $sl = Service::getInstance();
 
         $sl->set('security', new Security());
+        $sl->set('request', new Request());
+        $this->config = include_once Service::get('request')->change_slashes($config);
         $sl->set('session', new Session());
         $sl->set('router', new Router($this->config['routes']));
         $sl->set('db', new \PDO($this->config['pdo']['dsn'], $this->config['pdo']['user'], $this->config['pdo']['password']));
@@ -43,6 +42,11 @@ class Application {
      
     
     public function run(){
+        if (!Service::get('security')->checkToken()) {
+            new AccessException('tokens aren\'t same');
+            die();
+        }
+
         $route = Service::get('router')->start();
         $this->savePathToView($route['controller']);
 
@@ -62,7 +66,7 @@ class Application {
 
         }
 
-        Service::get('session')->setReturnUrl($this->request->getRequestInfo('referer'));
+        Service::get('session')->setReturnUrl(Service::get('request')->getRequestInfo('referer'));
 
         $response = $this->startController($route['controller'], $route['action'], $vars);
 

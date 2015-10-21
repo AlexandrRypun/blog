@@ -57,7 +57,7 @@ class Request {
     }
 
     public function post($var){
-        return $this->filter($this->post[$var]);
+        return ($this->filter($this->post[$var]))?$this->filter($this->post[$var]):false;
     }
 
     public function get($var){

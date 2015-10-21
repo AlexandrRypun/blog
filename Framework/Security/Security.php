@@ -20,4 +20,20 @@ class Security{
         Service::get('session')->delFromSess('user');
     }
 
+    public function generateToken(){
+        $token = md5(Service::get('session')->getSessID());
+        setcookie('token', $token);
+        return $token;
+    }
+
+    public function checkToken(){
+        $token = (Service::get('request')->post('token'))?Service::get('request')->post('token'):null;
+        if(!is_null($token)){
+            return ($token == $_COOKIE['token'])?true:false;
+        }else{
+            return true;
+        }
+
+    }
+
 }
