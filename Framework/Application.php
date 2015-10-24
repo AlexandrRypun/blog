@@ -42,17 +42,18 @@ class Application {
      
     
     public function run(){
+        Service::get('security')->generateToken();
         if (!Service::get('security')->checkToken()) {
-            new AccessException('tokens aren\'t same');
+            new AccessException('tokens aren\'t the same');
             die();
         }
+
 
         $route = Service::get('router')->start();
         $this->savePathToView($route['controller']);
 
         $vars = null;
         if (!empty($route['vars'])) $vars = $route['vars'];
-
         if  (!empty($route['security'])){
             $user = Service::get('session')->get('user');
             if (is_object($user)) {
@@ -60,13 +61,15 @@ class Application {
                     new AccessException('access denied');
                 }
             }else{
+               Service::get('session')->setReturnUrl(Service::get('router')->buildRoute($route['_name']));
                 $redirect = new ResponseRedirect(Service::get('router')->buildRoute($this->config['security']['login_route']));
                 $redirect->send();
             }
 
         }
 
-        Service::get('session')->setReturnUrl(Service::get('request')->getRequestInfo('referer'));
+        Service::get('session')->setReturnUrl(Service::get('request')->getRequestInfo('uri'));
+
 
         $response = $this->startController($route['controller'], $route['action'], $vars);
 

@@ -6,14 +6,13 @@ namespace Framework\Controller;
 
 use Framework\DI\Service;
 use Framework\Renderer\Renderer;
-use Framework\Request\Request;
 use Framework\Response\Response;
 use Framework\Response\ResponseRedirect;
 
 abstract class Controller {
 
     protected function getRequest(){
-        return new Request();
+        return Service::get('request');
     }
 
     protected function render($layout, $content){

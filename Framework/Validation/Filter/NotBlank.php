@@ -3,13 +3,12 @@
 namespace Framework\Validation\Filter;
 
 
-class NotBlank{
+class NotBlank extends AFilter{
 
-    public function __construct(){
-        //echo "notblank";
-    }
 
-    public function check(){
-       // echo "чекаю";
+    public function check($value){
+        if ($value == false) $this->error = 'should not be blank';
+
+        return ($this->error)?$this->error:false;
     }
 }

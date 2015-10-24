@@ -25,7 +25,9 @@ class Session{
 
     public function setReturnUrl($url){
         if (!strpos($url, 'login')) $this->addToSess('returnUrl',$url);
+
         $this->returnUrl = $this->get('returnUrl');
+ 
     }
 
 }

@@ -21,9 +21,13 @@ class Security{
     }
 
     public function generateToken(){
-        $token = md5(Service::get('session')->getSessID());
-        setcookie('token', $token);
-        return $token;
+        if (Service::get('session')->get('token')){
+            return Service::get('session')->get('token');
+        }else{
+            $token = md5(Service::get('session')->getSessID());
+            setcookie('token', $token);
+            Service::get('session')->addToSess('token', $token);
+        }
     }
 
     public function checkToken(){
