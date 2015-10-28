@@ -7,10 +7,14 @@ use Framework\Response\Response;
 use Framework\Renderer\Renderer;
 
 class ServerErrorException extends \Exception{
+    public $code;
+    public $layout;
+    public $message;
+
     public function __construct($code, $message, $layout){
-        $renderer = new Renderer($layout, array('message'=>$message, 'code'=>$code));
-        $response = new Response($renderer->render());
-        $response->send();
+        $this->code = $code;
+        $this->message = $message;
+        $this->layout = $layout;
     }
 
 }

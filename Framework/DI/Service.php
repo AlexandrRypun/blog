@@ -3,6 +3,8 @@ namespace Framework\DI;
 
 
 
+
+
 class Service {
 
     private static $instance = null;
@@ -27,7 +29,7 @@ class Service {
         if (array_key_exists($service_name, self::$services)){
             return self::$services[$service_name];
         }else{
-            throw new ServiceNotFoundExeption();
+            echo "Sorry, service not found!!!";die();
         }
     }
 

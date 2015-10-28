@@ -40,4 +40,9 @@ class Security{
 
     }
 
+    public function change_slashes($str){
+        $str = str_replace('\\', '/', $str);
+        return $str;
+    }
+
 }

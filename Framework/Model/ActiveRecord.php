@@ -6,6 +6,7 @@ namespace Framework\Model;
 use Blog\Model\Post;
 use Blog\Model\User;
 use Framework\DI\Service;
+use Framework\Exception\DatabaseException;
 
 abstract class ActiveRecord{
 
@@ -13,8 +14,10 @@ abstract class ActiveRecord{
     protected $key = 'id';
     public $id = null;
 
+    abstract static function getTable();
 
     public function save(){
+
         $db = Service::get('db');
         $table = static::getTable();
         $this->password = md5($this->password);
@@ -40,7 +43,9 @@ abstract class ActiveRecord{
         $query .= $query_part;
 
         $sth = $db->prepare($query);
-        $sth->execute();
+        $res = $sth->execute();
+        if (!$res) throw new DatabaseException('Data save failed');
+
     }
 
 

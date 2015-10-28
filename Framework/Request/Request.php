@@ -51,11 +51,6 @@ class Request {
         }
     }
 
-    public function change_slashes($str){
-        $str = str_replace('\\', '/', $str);
-        return $str;
-    }
-
     public function post($var){
         return ($this->filter($this->post[$var]))?$this->filter($this->post[$var]):false;
     }
