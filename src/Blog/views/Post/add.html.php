@@ -7,12 +7,11 @@ $getValidationClass = function ($field) use ($errors) {
 };
 
 $getErrorBody = function ($field) use ($errors){
-  if (isset($errors[$field])){
+  if (is_array($errors) && isset($errors[$field])){
       return '<span class="glyphicon glyphicon-remove form-control-feedback"></span><span class="pull-right small form-error">'.$errors[$field].'</span>';
   }
     return '';
 }
-
 ?>
 
 <div class="panel panel-default">
@@ -25,11 +24,11 @@ $getErrorBody = function ($field) use ($errors){
     </div>
     <div class="panel-body">
 
-        <?php if (isset($error) && !is_array($error)) { ?>
+        <?php if (isset($errors) && !is_array($errors)) { ?>
             <div class="alert alert-danger alert-dismissible" role="alert">
                 <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
                         class="sr-only">Close</span></button>
-                <strong>Error!</strong> <?php echo $error ?>
+                <strong>Error!</strong> <?php echo $errors ?>
             </div>
         <?php } ?>
 

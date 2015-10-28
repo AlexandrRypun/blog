@@ -11,8 +11,5 @@ namespace Framework\Exception;
 
 class DatabaseException extends \Exception{
 
-    public function __construct(){
-        echo "db error";
-    }
 
 }

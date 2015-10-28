@@ -6,8 +6,7 @@ use Blog\Model\User;
 use Framework\DI\Service;
 use Framework\Exception\AccessException;
 use Framework\Exception\ServerErrorException;
-use Framework\Exception\HttpNotFoundExeption;
-use Framework\Model\DB;
+use Framework\Exception\HttpNotFoundException;
 use Framework\Renderer\Renderer;
 use Framework\Request\Request;
 use Framework\Response\AResponse;
@@ -24,7 +23,7 @@ use Framework\Session\Session;
  */
 
 class Application {
-    private $config;
+    public $config;
 
     public function __construct($config){
 
@@ -32,7 +31,7 @@ class Application {
 
         $sl->set('security', new Security());
         $sl->set('request', new Request());
-        $this->config = include_once Service::get('request')->change_slashes($config);
+        $this->config = include_once Service::get('security')->change_slashes($config);
         $sl->set('session', new Session());
         $sl->set('router', new Router($this->config['routes']));
         $sl->set('db', new \PDO($this->config['pdo']['dsn'], $this->config['pdo']['user'], $this->config['pdo']['password']));
@@ -41,37 +40,52 @@ class Application {
     
      
     
-    public function run(){
+    public function run()
+    {
         Service::get('security')->generateToken();
-        if (!Service::get('security')->checkToken()) {
-            new AccessException('tokens aren\'t the same');
+
+        try {
+            if (!Service::get('security')->checkToken()) {
+                throw new AccessException('tokens aren\'t the same');
+            }
+
+            $route = Service::get('router')->start();
+
+            if (!empty($route['security'])) {
+                $user = Service::get('session')->get('user');
+                if (is_object($user)) {
+                    if (array_search($user->getRole(), $route['security']) === false) {
+                        throw new AccessException('access denied');
+                    }
+                } else {
+                    Service::get('session')->setReturnUrl(Service::get('router')->buildRoute($route['_name']));
+                    $redirect = new ResponseRedirect(Service::get('router')->buildRoute($this->config['security']['login_route']));
+                    $redirect->send();
+                }
+            }
+
+            $this->savePathToView($route['controller']);
+            Service::get('session')->setReturnUrl(Service::get('request')->getRequestInfo('uri'));
+
+            $vars = null;
+            if (!empty($route['vars'])) $vars = $route['vars'];
+
+            $response = $this->startController($route['controller'], $route['action'], $vars);
+
+
+        }catch(AccessException $e){
+            echo $e->getMessage();die();
+        }catch(HttpNotFoundException $e){
+            $redirect = new ResponseRedirect(Service::get('router')->buildRoute('/'));
+            $redirect->send();
+        }catch(ServerErrorException $e){
+            $renderer = new Renderer($e->layout, array('message'=>$e->message, 'code'=>$e->code));
+            $response = new Response($renderer->render());
+            $response->send();
             die();
         }
 
 
-        $route = Service::get('router')->start();
-        $this->savePathToView($route['controller']);
-
-        $vars = null;
-        if (!empty($route['vars'])) $vars = $route['vars'];
-        if  (!empty($route['security'])){
-            $user = Service::get('session')->get('user');
-            if (is_object($user)) {
-                if (array_search($user->getRole(), $route['security']) === false){
-                    new AccessException('access denied');
-                }
-            }else{
-               Service::get('session')->setReturnUrl(Service::get('router')->buildRoute($route['_name']));
-                $redirect = new ResponseRedirect(Service::get('router')->buildRoute($this->config['security']['login_route']));
-                $redirect->send();
-            }
-
-        }
-
-        Service::get('session')->setReturnUrl(Service::get('request')->getRequestInfo('uri'));
-
-
-        $response = $this->startController($route['controller'], $route['action'], $vars);
 
         if ($response->getType() == 'html'){
 
@@ -88,6 +102,7 @@ class Application {
         }
 
         $response->send();
+
     }
 
     public function startController($controller, $action, $vars=array()){
@@ -96,33 +111,44 @@ class Application {
         $action = $action.'Action';
 
         $refl = new \ReflectionClass($controller);
-        if ($refl->hasMethod($action)) {
+        try{
+            if ($refl->hasMethod($action)) {
             $method = new \ReflectionMethod($controller, $action);
             $params = $method->getParameters();
 
-            if (empty($params)) {
-                $response = $method->invoke(new $controller);
-            }else{
-                foreach ($params as $value){
-                    if (isset($vars[$value->getName()])) {
-                        $parameters[$value->getName()] = $vars[$value->getName()];
-                    }else{
-                        new HttpNotFoundExeption('parameters for method '.$method->getName());
-                    }
 
+                if (empty($params)) {
+                    $response = $method->invoke(new $controller);
+                }else{
+                    foreach ($params as $value){
+                        if (isset($vars[$value->getName()])) {
+                            $parameters[$value->getName()] = $vars[$value->getName()];
+                        }else{
+                           throw new HttpNotFoundExeption('parameters for method '.$method->getName());
+                        }
+
+                    }
+                    $response = $method->invokeArgs(new $controller, $parameters);
                 }
-                $response = $method->invokeArgs(new $controller, $parameters);
-            }
+
 
             if ($response instanceof AResponse){
                 return $response;
 
             }else{
-                new ServerErrorException(500, 'Sory, server error', $this->config['error_500']);
+               throw new ServerErrorException(500, 'Sory, server error', $this->config['error_500']);
             }
 
         }else{
-            new HttpNotFoundExeption('method');
+            throw new HttpNotFoundException('method not found');
+        }
+        }catch (HttpNotFoundException $e){
+            throw $e;
+        }catch(ServerErrorException $e){
+            $renderer = new Renderer($e->layout, array('message'=>$e->message, 'code'=>$e->code));
+            $response = new Response($renderer->render());
+            $response->send();
+            die();
         }
     }
 

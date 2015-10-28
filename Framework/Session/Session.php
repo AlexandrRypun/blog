@@ -3,9 +3,11 @@
 namespace Framework\Session;
 
 
+use Framework\DI\Service;
+
 class Session{
 
-    public  $returnUrl;
+    public  $returnUrl = null;
 
     public function addToSess($key, $value){
         $_SESSION[$key] = $value;
@@ -24,10 +26,11 @@ class Session{
     }
 
     public function setReturnUrl($url){
-        if (!strpos($url, 'login')) $this->addToSess('returnUrl',$url);
 
+        if (!strpos($url, '/login')) {
+            $this->addToSess('returnUrl',$url);
+        }
         $this->returnUrl = $this->get('returnUrl');
- 
     }
 
 }

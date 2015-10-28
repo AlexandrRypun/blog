@@ -1,7 +1,7 @@
 <?
 namespace Framework\Router;
 
-use Framework\Exception\HttpNotFoundExeption;
+use Framework\Exception\HttpNotFoundException;
 use Framework\DI\Service;
 
 
@@ -27,34 +27,37 @@ class Router {
 
         $uri =  Service::get('request')->getRequestInfo('uri');
 
-        if (!is_null($this->routes)) {
-            foreach ($this->routes as $key=>$value) {
-                if (strpos($value['pattern'], '{')) {
-                    $res = $this->patToReg($value);
-                    $pattern = $res[0];
-                    $vars = $this->getVars($pattern, $res[1], $uri);
+        try{
+            if (!is_null($this->routes)) {
+                foreach ($this->routes as $key=>$value) {
+                    if (strpos($value['pattern'], '{')) {
+                        $res = $this->patToReg($value);
+                        $pattern = $res[0];
+                        $vars = $this->getVars($pattern, $res[1], $uri);
+                    }else{
+                        $pattern = $value['pattern'];
+                    }
+
+                    if (preg_match('~^'.$pattern.'$~', $uri)) {
+                        $route = $value;
+                        break;
+                    }
+
+                }
+
+                if (!empty($route)){
+                    $route['_name'] = $key;
+                    if (!empty($vars)) $route['vars'] = $vars;
+                    return $route;
                 }else{
-                    $pattern = $value['pattern'];
+                     throw new HttpNotFoundException('route not found');
                 }
 
-                if (preg_match('~^'.$pattern.'$~', $uri)) {
-                    $route = $value;
-                    break;
-                }
-
-            }
-
-            if (!empty($route)){
-                $route['_name'] = $key;
-                if (!empty($vars)) $route['vars'] = $vars;
-                return $route;
             }else{
-                new HttpNotFoundExeption('route');
-                die();
+                throw new HttpNotFoundException('routes not found');
             }
-
-        }else{
-            new HttpNotFoundExeption('routes');
+        }catch (HttpNotFoundException $e){
+            throw $e;
         }
     }
 
@@ -113,7 +116,7 @@ class Router {
             if (is_null($pattern)) $pattern = '/';
 
         }else{
-            new HttpNotFoundExeption('route');
+            throw new HttpNotFoundException('route');
         }
 
         return $pattern;
