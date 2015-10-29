@@ -1,4 +1,7 @@
 <?
+/**
+ * Create abstract class of main controller
+ */
 
 namespace Framework\Controller;
 

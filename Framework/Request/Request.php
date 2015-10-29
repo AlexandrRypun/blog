@@ -3,9 +3,7 @@
  * Create class Request
  */
 namespace Framework\Request;
- 
 
-use Framework\Validation\Validator;
 
 class Request {
     
@@ -32,7 +30,9 @@ class Request {
     }
     
     /**
-     * Return necessary information from request
+     * Method returns necessary information from request
+     *
+     * @return string
      */
     public function getRequestInfo($name){
         return $this->filter($this->$name);
@@ -51,12 +51,26 @@ class Request {
         }
     }
 
+    /**
+     * Method returns value of variable from POST request
+     *
+     * @param string $var
+     * @return array|bool
+     */
+
     public function post($var){
         return ($this->filter($this->post[$var]))?$this->filter($this->post[$var]):false;
     }
 
+    /**
+     * Method returns value of variable from GET request
+     *
+     * @param string $var
+     * @return array|bool
+     */
+
     public function get($var){
-        return $this->filter($this->get[$var]);
+        return ($this->filter($this->get[$var]))?$this->filter($this->get[$var]):false;
     }
 
     public function isPost(){
@@ -74,6 +88,13 @@ class Request {
             return false;
         }
     }
+
+    /**
+     * Method deletes special characters from value
+     *
+     * @param string|array $value
+     * @return string|array|null
+     */
 
     private function filter($value){
         $pattern = '/<\s*\/*\s*\w*>|[\$`~#<>\[\]\{\}\\\*\^%]/';

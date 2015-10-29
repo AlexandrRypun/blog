@@ -1,4 +1,7 @@
 <?php
+/**
+ * Create class Application
+ */
 
 namespace Framework;
 session_start();
@@ -17,13 +20,15 @@ use Framework\Security\Security;
 use Framework\Session\Session;
 
 
-/**
- * Class Application
- * @package Framework
- */
-
 class Application {
+
     public $config;
+
+    /**
+     * Method records some objects into Service Locator
+     *
+     * @param $config
+     */
 
     public function __construct($config){
 
@@ -34,11 +39,21 @@ class Application {
         $this->config = include_once Service::get('security')->change_slashes($config);
         $sl->set('session', new Session());
         $sl->set('router', new Router($this->config['routes']));
-        $sl->set('db', new \PDO($this->config['pdo']['dsn'], $this->config['pdo']['user'], $this->config['pdo']['password']));
         $sl->set('app', $this);
+        try{
+            $sl->set('db', new \PDO($this->config['pdo']['dsn'], $this->config['pdo']['user'], $this->config['pdo']['password']));
+        }catch(\PDOException $e){
+            echo $e->getMessage();die();
+        }
+
+
     }
-    
-     
+
+    /**
+     * Method initiates the application's work
+     *
+     * @throws AccessException
+     */
     
     public function run()
     {
@@ -49,8 +64,10 @@ class Application {
                 throw new AccessException('tokens aren\'t the same');
             }
 
+            //gets necessary information from Router
             $route = Service::get('router')->start();
 
+            // if there are restrictions of rights, will check user's rights
             if (!empty($route['security'])) {
                 $user = Service::get('session')->get('user');
                 if (is_object($user)) {
@@ -105,6 +122,18 @@ class Application {
 
     }
 
+
+    /**
+     * Method starts necessary method of necessary controller with help of Reflection
+     *
+     * @param string $controller
+     * @param string $action
+     * @param array $vars
+     * @throws HttpNotFoundException
+     * @throws \Exception
+     *
+     * @return object
+     */
     public function startController($controller, $action, $vars=array()){
 
         $controller = new $controller;
@@ -124,7 +153,7 @@ class Application {
                         if (isset($vars[$value->getName()])) {
                             $parameters[$value->getName()] = $vars[$value->getName()];
                         }else{
-                           throw new HttpNotFoundExeption('parameters for method '.$method->getName());
+                           throw new HttpNotFoundException('parameters for method '.$method->getName());
                         }
 
                     }
@@ -152,6 +181,12 @@ class Application {
         }
     }
 
+
+    /**
+     * Method creates path to necessary View from controller's name and saves it into Session array
+     *
+     * @param string $controller
+     */
     private function savePathToView($controller){
         $parts = explode('\\', $controller);
         $last_part = array_pop($parts);

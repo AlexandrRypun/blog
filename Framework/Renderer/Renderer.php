@@ -1,7 +1,11 @@
 <?
+/**
+ * Create class Render
+ */
+
 namespace Framework\Renderer;
 
-use Framework\Application;
+
 use Framework\DI\Service;
 
 class Renderer {
@@ -9,6 +13,10 @@ class Renderer {
     protected $layout;
     protected $content;
 
+    /**
+     * @param string $layout
+     * @param mixed $content
+     */
 
     public function __construct($layout, $content){
         $this->content = $content;
@@ -20,6 +28,13 @@ class Renderer {
             $this->layout = '../src/Blog/views/'.$dir.'/'.$layout.'.php';
         }
     }
+
+    /**
+     * Method includes layout and substitutes data. Result is written into buffer and is returned
+     * Method has realization of some callbacks
+     *
+     * @return string
+     */
 
     public  function  render(){
 

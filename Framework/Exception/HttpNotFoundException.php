@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * Create class HttpNotFoundException
+ */
 namespace Framework\Exception;
 
 

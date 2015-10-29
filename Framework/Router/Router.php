@@ -1,14 +1,14 @@
 <?
+/**
+ * Create class Router
+ */
+
 namespace Framework\Router;
 
 use Framework\Exception\HttpNotFoundException;
 use Framework\DI\Service;
 
 
-/**
- * Class Router
- * @package Framework\Router
- */
     
 class Router {
 
@@ -20,7 +20,10 @@ class Router {
     }
 
     /**
-     * Finds necessary information from routes
+     * Method finds necessary information from routes
+     *
+     * @return array
+     * @throws HttpNotFoundException
      */
 
     public function start(){
@@ -30,6 +33,8 @@ class Router {
         try{
             if (!is_null($this->routes)) {
                 foreach ($this->routes as $key=>$value) {
+
+                    //if pattern has parameters, the method will call 'patToReg()' to transform pattern to regexp
                     if (strpos($value['pattern'], '{')) {
                         $res = $this->patToReg($value);
                         $pattern = $res[0];
@@ -62,6 +67,12 @@ class Router {
     }
 
 
+    /**
+     * Method transforms pattern to regexp
+     *
+     * @param array $route
+     * @return array
+     */
     private function patToReg($route = array()){
 
         $pattern = '/\{[\w\d_]+\}/Ui';
@@ -80,6 +91,16 @@ class Router {
     }
 
 
+    /**
+     * Method defines values of variables
+     *
+     * @param string $pattern
+     * @param array $keys
+     * @param string $uri
+     *
+     * @return array
+     */
+
     private function getVars($pattern, $keys, $uri){
 
         preg_match('~'.$pattern.'~i', $uri, $matches);
@@ -92,6 +113,15 @@ class Router {
 
         return $vars;
     }
+
+    /**
+     * Method creates link from routename
+     *
+     * @param string $name
+     * @param array $params
+     * @return string
+     * @throws HttpNotFoundException
+     */
 
     public function buildRoute($name, $params = array()){
 

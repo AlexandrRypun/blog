@@ -1,4 +1,8 @@
 <?
+/**
+ * Create class Validator
+ */
+
 namespace Framework\Validation;
 
 class Validator{
@@ -10,6 +14,12 @@ class Validator{
     public function __construct($obj){
         $this->obj = $obj;
     }
+
+    /**
+     * Method checks an object for compliance with rules
+     *
+     * @return bool
+     */
 
     public function isValid(){
         $rules = array();
@@ -31,14 +41,6 @@ class Validator{
     public function validString($string){
         $string = trim(htmlspecialchars(strip_tags($string)));
         return $string;
-    }
-    
-    public function isNumber($val){
-        if (is_numeric($val)){
-            return true;
-        }else{
-            return false;
-        }
     }
 }
 ?>

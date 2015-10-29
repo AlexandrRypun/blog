@@ -1,10 +1,9 @@
 <?
+/**
+ * Create abstract class AResponse
+ */
 namespace Framework\Response;
 
-/**
- * Class AResponse
- * @package Framework\Response
- */
 
 abstract class AResponse{
 

@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * Create class AccessException
+ */
 namespace Framework\Exception;
 
 

@@ -1,9 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: sash
- * Date: 24.10.15
- * Time: 14:05
+ * Create abstract class AFilter
  */
 
 namespace Framework\Validation\Filter;

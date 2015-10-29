@@ -1,4 +1,7 @@
 <?php
+/**
+ * Create class Security
+ */
 
 namespace Framework\Security;
 
