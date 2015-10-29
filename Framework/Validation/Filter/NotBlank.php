@@ -1,4 +1,7 @@
 <?php
+/**
+ * Create class NotBlank
+ */
 
 namespace Framework\Validation\Filter;
 

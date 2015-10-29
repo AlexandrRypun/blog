@@ -1,11 +1,8 @@
 <?
-
-namespace Framework\Response;
-
 /**
- * Class ResponseRedirect
- * @package Framework\Response
+ * Create class ResponseRedirect
  */
+namespace Framework\Response;
 
 class ResponseRedirect extends AResponse{
 

@@ -1,10 +1,10 @@
 <?php
-
+/**
+ * Create abstract class ActiveRecord - main model
+ */
 namespace Framework\Model;
 
 
-use Blog\Model\Post;
-use Blog\Model\User;
 use Framework\DI\Service;
 use Framework\Exception\DatabaseException;
 
@@ -15,6 +15,11 @@ abstract class ActiveRecord{
     public $id = null;
 
     abstract static function getTable();
+
+    /**
+     * method for saving data to database
+     * @throws DatabaseException
+     */
 
     public function save(){
 

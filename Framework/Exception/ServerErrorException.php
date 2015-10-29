@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * Create class ServerErrorException
+ */
 namespace Framework\Exception;
 
 

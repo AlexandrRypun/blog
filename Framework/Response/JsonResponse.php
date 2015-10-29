@@ -1,11 +1,9 @@
 <?
-
+/**
+ * Create class JsonResponse
+ */
 namespace Framework\Response;
 
-/**
- * Class JsonResponse
- * @package Framework\Response
- */
 
 class JsonResponse extends AResponse{
 

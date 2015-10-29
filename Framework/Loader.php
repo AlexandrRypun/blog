@@ -14,7 +14,8 @@ class Loader {
     }
 
     /**
-     * Create method "autoload"
+     * Method realizes function of autoload
+     *
      * Form address of necessary file with help of class' name
      * if file exist - include it, otherwise - search right namespace in $namespaces
      */
