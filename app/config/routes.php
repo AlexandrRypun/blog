@@ -1,5 +1,5 @@
 <?php
-
+//this is routes
 return array(
     'home'           => array(
         'pattern'    => '/',
