@@ -1,7 +1,7 @@
 <?
 
 /**
- * author Alexandr Rypun
+ * author Alexandr Rypun arypun@gmail.com
  * Create class Loader
  */
 
