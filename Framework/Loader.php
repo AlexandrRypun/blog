@@ -1,6 +1,7 @@
 <?
 
 /**
+ * author Alexandr Rypun
  * Create class Loader
  */
 
