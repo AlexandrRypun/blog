@@ -1,10 +1,5 @@
 <?php
 
-/*
- * this is routes
- * mother fucker
- */
-
 return array(
     'home'           => array(
         'pattern'    => '/',
