@@ -1,3 +1,5 @@
+
+<!--deded-->
 <?php if (!isset($errors)) {
     $errors = array();
 }
