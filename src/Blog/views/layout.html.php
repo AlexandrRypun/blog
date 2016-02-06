@@ -2,7 +2,6 @@
 $activeIfRoute = function ($item) use (&$route) {
    return $route['_name'] === $item?'class="active"':'';
 };
-//hh
 ?>
 
 <!DOCTYPE html>
