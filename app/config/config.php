@@ -1,4 +1,5 @@
 <?php
+//this is configuration file
 return array(
     'mode'        => 'dev',
     'routes'      => include('routes.php'),
