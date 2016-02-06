@@ -11,6 +11,8 @@ return array(
         'controller' => 'Blog\\Controller\\TestController',
         'action'     => 'redirect',
     ),
+
+    
     'test_json' => array(
         'pattern'    => '/test_json',
         'controller' => 'Blog\\Controller\\TestController',
